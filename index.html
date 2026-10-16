@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mr. Bread Sales Dashboard - Yogyakarta Edition</title>
+    <title>Mr. Bread Sales Dashboard</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- HTML2Canvas -->
@@ -15,8 +15,8 @@
             theme: {
                 extend: {
                     colors: {
-                        mrbred: '#D3202A', /* Merah Topi Logo */
-                        mrbbrown: '#3E2320', /* Cokelat Kumis */
+                        mrbred: '#D3202A', 
+                        mrbbrown: '#3E2320',
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
@@ -26,10 +26,9 @@
         }
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
         body { background-color: #f8fafc; }
         .print-area { background: white; margin-bottom: 2rem; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1); border-radius: 0.5rem; overflow: hidden; }
-        /* Pola latar belakang tipis untuk kesan bakery/elegan */
         .bg-pattern { background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 20px 20px; }
     </style>
 </head>
@@ -45,7 +44,7 @@
             </div>
         </div>
         
-        <textarea id="rawData" rows="6" class="w-full p-4 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-mrbred focus:border-transparent font-mono text-sm bg-gray-50" placeholder="Paste text sales Telegram di sini (contoh: data G020, G089, atau Nasional)..."></textarea>
+        <textarea id="rawData" rows="6" class="w-full p-4 border-2 border-slate-200 rounded-lg focus:outline-none focus:ring-0 focus:border-mrbred font-mono text-sm bg-slate-50" placeholder="Paste text sales Telegram di sini..."></textarea>
         
         <div class="mt-5 flex flex-wrap gap-3">
             <button onclick="processData()" class="bg-mrbred text-white px-6 py-2.5 rounded-lg font-bold hover:bg-red-700 transition shadow-md flex items-center gap-2">
@@ -63,54 +62,67 @@
         
         <!-- DASHBOARD 1: TOP 10 & BOTTOM 10 -->
         <div id="areaTopBottom" class="print-area border-t-8 border-mrbred">
-            <!-- Header Branded -->
-            <div class="bg-white px-8 py-6 flex justify-between items-center border-b border-gray-100">
+            <div class="bg-white px-8 py-6 flex justify-between items-center border-b border-slate-200">
                 <div>
                     <h4 class="text-mrbred font-bold tracking-widest text-sm mb-1 uppercase">Sales Performance</h4>
                     <h1 class="text-4xl font-extrabold text-mrbbrown tracking-tight">TOP 10 & BOTTOM 10 TOKO</h1>
                     <div class="flex items-center gap-3 mt-2">
-                        <span class="bg-mrbred text-white px-3 py-1 rounded-full text-sm font-bold shadow-sm cabangCodeHolder">GXXX</span>
-                        <span class="text-gray-500 font-medium text-sm cabangNameHolder">NAMA CABANG</span>
-                        <span class="text-gray-300">|</span>
-                        <span class="text-sm text-gray-500">Update: <span class="timeUpdateHolder font-semibold"></span></span>
+                        <span class="bg-mrbred text-white px-3 py-1 rounded-md text-sm font-bold shadow-sm cabangCodeHolder">GXXX</span>
+                        <span class="text-slate-600 font-semibold text-sm cabangNameHolder">NAMA CABANG</span>
+                        <span class="text-slate-300">|</span>
+                        <span class="text-sm text-slate-500">Update: <span class="timeUpdateHolder font-semibold"></span></span>
                     </div>
                 </div>
-                <img src="LOGO MRB 2023-01.png" alt="Logo Mr Bread" class="h-24 object-contain drop-shadow-md">
+                <img src="LOGO MRB 2023-01.png" alt="Logo Mr Bread" class="h-20 object-contain drop-shadow-sm">
             </div>
 
-            <div class="p-8 bg-gray-50/50">
+            <div class="p-8 bg-slate-50">
                 <!-- Summary Cards -->
                 <div class="grid grid-cols-5 gap-4 mb-8">
-                    <div class="bg-white border-l-4 border-gray-400 rounded p-4 shadow-sm"><p class="text-xs text-gray-500 font-bold uppercase tracking-wide">Total Toko</p><h3 id="totToko" class="text-2xl font-extrabold text-gray-800 mt-1">0</h3></div>
-                    <div class="bg-white border-l-4 border-green-500 rounded p-4 shadow-sm"><p class="text-xs text-green-600 font-bold uppercase tracking-wide">Sudah Jual</p><h3 id="totJual" class="text-2xl font-extrabold text-green-600 mt-1">0</h3></div>
-                    <div class="bg-white border-l-4 border-mrbred rounded p-4 shadow-sm"><p class="text-xs text-mrbred font-bold uppercase tracking-wide">Toko 0 Pcs</p><h3 id="totNol" class="text-2xl font-extrabold text-mrbred mt-1">0</h3></div>
-                    <div class="bg-white border-l-4 border-mrbbrown rounded p-4 shadow-sm"><p class="text-xs text-gray-500 font-bold uppercase tracking-wide">Total Qty</p><h3 id="totQty" class="text-2xl font-extrabold text-mrbbrown mt-1">0</h3></div>
-                    <div class="bg-white border-l-4 border-mrbred rounded p-4 shadow-sm"><p class="text-xs text-gray-500 font-bold uppercase tracking-wide">Total Rp Sales</p><h3 id="totRp" class="text-2xl font-extrabold text-mrbred mt-1">Rp 0</h3></div>
+                    <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm border-t-4 border-t-slate-400"><p class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">Total Toko</p><h3 id="totToko" class="text-2xl font-extrabold text-slate-800 mt-1">0</h3></div>
+                    <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm border-t-4 border-t-green-500"><p class="text-[11px] text-green-600 font-bold uppercase tracking-wider">Sudah Jual</p><h3 id="totJual" class="text-2xl font-extrabold text-green-600 mt-1">0</h3></div>
+                    <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm border-t-4 border-t-mrbred"><p class="text-[11px] text-mrbred font-bold uppercase tracking-wider">Toko 0 Pcs</p><h3 id="totNol" class="text-2xl font-extrabold text-mrbred mt-1">0</h3></div>
+                    <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm border-t-4 border-t-slate-800"><p class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">Total Qty</p><h3 id="totQty" class="text-2xl font-extrabold text-slate-800 mt-1">0</h3></div>
+                    <div class="bg-white border border-slate-200 rounded-lg p-4 shadow-sm border-t-4 border-t-mrbred"><p class="text-[11px] text-slate-500 font-bold uppercase tracking-wider">Total Rp Sales</p><h3 id="totRp" class="text-2xl font-extrabold text-mrbred mt-1">Rp 0</h3></div>
                 </div>
 
                 <!-- Tabel Top 10 -->
-                <div class="mb-8 bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
-                    <div class="bg-green-600 text-white font-bold px-5 py-3 text-lg flex items-center gap-2">
+                <div class="mb-8 bg-white rounded-lg shadow-sm border border-slate-300 overflow-hidden">
+                    <div class="bg-green-600 text-white font-bold px-5 py-3 text-lg flex items-center gap-2 border-b border-green-700">
                         <span>📈</span> 10 TOKO SALES TERTINGGI
                     </div>
                     <table class="w-full text-sm">
-                        <thead class="text-gray-500 bg-gray-50 border-b-2 border-gray-200">
-                            <tr><th class="py-3 px-4 text-left font-bold">#</th><th class="py-3 text-left font-bold">KODE</th><th class="py-3 text-left font-bold">NAMA TOKO</th><th class="py-3 text-right font-bold">QTY</th><th class="py-3 text-right font-bold">RP SALES</th><th class="py-3 px-4 text-right font-bold">STOCK</th></tr>
+                        <thead class="bg-slate-100 text-slate-600 border-b-2 border-slate-300">
+                            <tr class="divide-x divide-slate-200">
+                                <th class="py-3 px-4 text-center font-bold w-12">#</th>
+                                <th class="py-3 px-4 text-center font-bold">KODE</th>
+                                <th class="py-3 px-4 text-left font-bold">NAMA TOKO</th>
+                                <th class="py-3 px-4 text-center font-bold">QTY</th>
+                                <th class="py-3 px-4 text-right font-bold">RP SALES</th>
+                                <th class="py-3 px-4 text-center font-bold">STOCK</th>
+                            </tr>
                         </thead>
-                        <tbody id="top10Body" class="text-gray-700"></tbody>
+                        <tbody id="top10Body" class="text-slate-700 divide-y divide-slate-200"></tbody>
                     </table>
                 </div>
 
                 <!-- Tabel Bottom 10 -->
-                <div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
-                    <div class="bg-orange-500 text-white font-bold px-5 py-3 text-lg flex items-center gap-2">
+                <div class="bg-white rounded-lg shadow-sm border border-slate-300 overflow-hidden">
+                    <div class="bg-orange-500 text-white font-bold px-5 py-3 text-lg flex items-center gap-2 border-b border-orange-600">
                         <span>📉</span> 10 TOKO SALES TERENDAH <span class="text-sm font-normal opacity-90 ml-2">(Sudah jual, > 0 pcs)</span>
                     </div>
                     <table class="w-full text-sm">
-                        <thead class="text-gray-500 bg-gray-50 border-b-2 border-gray-200">
-                            <tr><th class="py-3 px-4 text-left font-bold">#</th><th class="py-3 text-left font-bold">KODE</th><th class="py-3 text-left font-bold">NAMA TOKO</th><th class="py-3 text-right font-bold">QTY</th><th class="py-3 text-right font-bold">RP SALES</th><th class="py-3 px-4 text-right font-bold">STOCK</th></tr>
+                        <thead class="bg-slate-100 text-slate-600 border-b-2 border-slate-300">
+                            <tr class="divide-x divide-slate-200">
+                                <th class="py-3 px-4 text-center font-bold w-12">#</th>
+                                <th class="py-3 px-4 text-center font-bold">KODE</th>
+                                <th class="py-3 px-4 text-left font-bold">NAMA TOKO</th>
+                                <th class="py-3 px-4 text-center font-bold">QTY</th>
+                                <th class="py-3 px-4 text-right font-bold">RP SALES</th>
+                                <th class="py-3 px-4 text-center font-bold">STOCK</th>
+                            </tr>
                         </thead>
-                        <tbody id="bottom10Body" class="text-gray-700"></tbody>
+                        <tbody id="bottom10Body" class="text-slate-700 divide-y divide-slate-200"></tbody>
                     </table>
                 </div>
             </div>
@@ -118,24 +130,24 @@
 
         <!-- DASHBOARD 2: TOKO 0 PCS -->
         <div id="areaZero" class="print-area border-t-8 border-mrbred mt-8">
-            <div class="bg-white px-8 py-6 flex justify-between items-center border-b border-gray-100">
+            <div class="bg-white px-8 py-6 flex justify-between items-center border-b border-slate-200">
                 <div>
                     <h4 class="text-mrbred font-bold tracking-widest text-sm mb-1 uppercase">Monitor Kunjungan</h4>
                     <h1 class="text-4xl font-extrabold text-mrbbrown tracking-tight">TOKO SALES 0 PCS</h1>
                     <div class="flex items-center gap-3 mt-2">
-                        <span class="bg-mrbred text-white px-3 py-1 rounded-full text-sm font-bold shadow-sm cabangCodeHolder">GXXX</span>
-                        <span class="text-gray-500 font-medium text-sm cabangNameHolder">NAMA CABANG</span>
+                        <span class="bg-mrbred text-white px-3 py-1 rounded-md text-sm font-bold shadow-sm cabangCodeHolder">GXXX</span>
+                        <span class="text-slate-600 font-semibold text-sm cabangNameHolder">NAMA CABANG</span>
                     </div>
                 </div>
-                <img src="LOGO MRB 2023-01.png" alt="Logo Mr Bread" class="h-20 object-contain opacity-90">
+                <img src="LOGO MRB 2023-01.png" alt="Logo Mr Bread" class="h-16 object-contain opacity-90">
             </div>
             
-            <div class="p-8 bg-gray-50/50">
+            <div class="p-8 bg-slate-50">
                 <div class="grid grid-cols-4 gap-6 mb-8">
-                    <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100 text-center"><p class="text-xs text-gray-500 font-bold uppercase mb-1">Total Toko 0 Pcs</p><h3 id="z-tot" class="text-2xl font-extrabold text-mrbred">0</h3></div>
-                    <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100 text-center"><p class="text-xs text-gray-500 font-bold uppercase mb-1">% Dari Total Toko</p><h3 id="z-pct" class="text-2xl font-extrabold text-mrbbrown">0%</h3></div>
-                    <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100 text-center"><p class="text-xs text-gray-500 font-bold uppercase mb-1">Stock Tertahan</p><h3 id="z-stk" class="text-2xl font-extrabold text-orange-600">0 pcs</h3></div>
-                    <div class="bg-white p-4 rounded-lg shadow-sm border border-red-200 text-center bg-red-50/30"><p class="text-xs text-mrbred font-bold uppercase mb-1">Prioritas (Stock >= 30)</p><h3 id="z-30" class="text-2xl font-extrabold text-mrbred">0</h3></div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200 text-center"><p class="text-[11px] text-slate-500 font-bold uppercase tracking-wider mb-1">Total Toko 0 Pcs</p><h3 id="z-tot" class="text-2xl font-extrabold text-mrbred">0</h3></div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200 text-center"><p class="text-[11px] text-slate-500 font-bold uppercase tracking-wider mb-1">% Dari Total Toko</p><h3 id="z-pct" class="text-2xl font-extrabold text-mrbbrown">0%</h3></div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm border border-slate-200 text-center"><p class="text-[11px] text-slate-500 font-bold uppercase tracking-wider mb-1">Stock Tertahan</p><h3 id="z-stk" class="text-2xl font-extrabold text-orange-600">0 pcs</h3></div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm border border-red-200 text-center bg-red-50"><p class="text-[11px] text-mrbred font-bold uppercase tracking-wider mb-1">Prioritas (Stock >= 30)</p><h3 id="z-30" class="text-2xl font-extrabold text-mrbred">0</h3></div>
                 </div>
                 <div id="zeroGrid" class="grid grid-cols-4 gap-4"></div>
             </div>
@@ -145,21 +157,28 @@
     <!-- WRAPPER: NASIONAL -->
     <div id="wrapperNasional" class="hidden max-w-5xl mx-auto">
         <div id="areaNasional" class="print-area border-t-8 border-mrbred">
-            <div class="bg-white px-8 py-6 flex justify-between items-center border-b border-gray-100">
+            <div class="bg-white px-8 py-6 flex justify-between items-center border-b border-slate-200">
                 <div>
                     <h4 class="text-mrbred font-bold tracking-widest text-sm mb-1 uppercase">Rekapitulasi</h4>
                     <h1 class="text-4xl font-extrabold text-mrbbrown tracking-tight">RANKING SALES NASIONAL</h1>
-                    <p class="text-sm text-gray-500 mt-2 font-medium">Update: <span class="timeUpdateHolder"></span></p>
+                    <p class="text-sm text-slate-500 mt-2 font-medium">Update: <span class="timeUpdateHolder"></span></p>
                 </div>
-                <img src="LOGO MRB 2023-01.png" alt="Logo Mr Bread" class="h-24 object-contain">
+                <img src="LOGO MRB 2023-01.png" alt="Logo Mr Bread" class="h-20 object-contain">
             </div>
-            <div class="p-8 bg-gray-50/50">
-                <div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+            <div class="p-8 bg-slate-50">
+                <div class="bg-white rounded-lg shadow-sm border border-slate-300 overflow-hidden">
                     <table class="w-full text-sm">
                         <thead class="bg-mrbbrown text-white">
-                            <tr><th class="py-3 px-4 text-center w-12 font-semibold">NO</th><th class="py-3 text-left font-semibold">KODE</th><th class="py-3 text-left font-semibold">NAMA CABANG</th><th class="py-3 text-right font-semibold">QTY SALES</th><th class="py-3 text-right font-semibold">RP SALES</th><th class="py-3 px-4 text-right font-semibold">TOTAL STOCK</th></tr>
+                            <tr class="divide-x divide-slate-600/50">
+                                <th class="py-3 px-4 text-center w-12 font-semibold">NO</th>
+                                <th class="py-3 px-4 text-center font-semibold">KODE</th>
+                                <th class="py-3 px-4 text-left font-semibold">NAMA CABANG</th>
+                                <th class="py-3 px-4 text-center font-semibold">QTY SALES</th>
+                                <th class="py-3 px-4 text-right font-semibold">RP SALES</th>
+                                <th class="py-3 px-4 text-center font-semibold">TOTAL STOCK</th>
+                            </tr>
                         </thead>
-                        <tbody id="nasionalBody" class="text-gray-700"></tbody>
+                        <tbody id="nasionalBody" class="text-slate-700 divide-y divide-slate-200"></tbody>
                     </table>
                 </div>
             </div>
@@ -167,7 +186,7 @@
     </div>
 
     <script>
-        // Kamus Mapping Cabang (Sesuai wilayah operasional PT Indoroti Prima Cemerlang)
+        // Kamus Mapping Cabang Khusus Operasional Anda
         const branchDictionary = {
             "G020": "DC YOGYAKARTA",
             "G156": "DC KLATEN",
@@ -196,7 +215,6 @@
             document.querySelectorAll('.timeUpdateHolder').forEach(el => el.innerText = now);
 
             if (isNasional) {
-                // RENDER NASIONAL
                 document.getElementById('wrapperNasional').classList.remove('hidden');
                 document.getElementById('wrapperCabang').classList.add('hidden');
                 document.getElementById('btnDlNasional').classList.remove('hidden');
@@ -215,16 +233,32 @@
 
                 data.sort((a, b) => b.rp - a.rp);
                 let nasHtml = "", tQty = 0, tRp = 0, tStk = 0;
+                
+                // Render Tabel Nasional dengan Grid Garis Tegas
                 data.forEach((d, i) => {
                     tQty += d.qty; tRp += d.rp; tStk += d.stock;
-                    let highlight = (i < 10) ? "bg-red-50/40 font-semibold" : "hover:bg-gray-50";
-                    nasHtml += `<tr class="border-b border-gray-100 ${highlight}"><td class="py-2.5 px-4 text-center text-gray-500">${i+1}</td><td class="font-mono text-gray-500">${d.kode}</td><td>${d.nama}</td><td class="text-right">${d.qty.toLocaleString('id-ID')}</td><td class="text-right text-mrbred font-bold">${formatRp(d.rp)}</td><td class="text-right px-4">${d.stock.toLocaleString('id-ID')}</td></tr>`;
+                    let highlight = (i < 10) ? "bg-red-50 font-semibold" : "even:bg-slate-50";
+                    nasHtml += `
+                    <tr class="divide-x divide-slate-200 hover:bg-slate-100 transition-colors ${highlight}">
+                        <td class="py-2.5 px-4 text-center text-slate-500">${i+1}</td>
+                        <td class="py-2.5 px-4 text-center font-mono text-slate-500">${d.kode}</td>
+                        <td class="py-2.5 px-4">${d.nama}</td>
+                        <td class="py-2.5 px-4 text-center">${d.qty.toLocaleString('id-ID')}</td>
+                        <td class="py-2.5 px-4 text-right text-mrbred font-bold">${formatRp(d.rp)}</td>
+                        <td class="py-2.5 px-4 text-center">${d.stock.toLocaleString('id-ID')}</td>
+                    </tr>`;
                 });
-                nasHtml += `<tr class="bg-mrbred text-white font-bold text-base"><td colspan="3" class="py-4 text-center tracking-widest uppercase">Total Nasional</td><td class="text-right">${tQty.toLocaleString('id-ID')}</td><td class="text-right">${formatRp(tRp)}</td><td class="text-right px-4">${tStk.toLocaleString('id-ID')}</td></tr>`;
+                
+                nasHtml += `
+                <tr class="bg-mrbred text-white font-bold text-base divide-x divide-red-800">
+                    <td colspan="3" class="py-4 px-4 text-center tracking-widest uppercase">Total Nasional</td>
+                    <td class="py-4 px-4 text-center">${tQty.toLocaleString('id-ID')}</td>
+                    <td class="py-4 px-4 text-right">${formatRp(tRp)}</td>
+                    <td class="py-4 px-4 text-center">${tStk.toLocaleString('id-ID')}</td>
+                </tr>`;
                 document.getElementById('nasionalBody').innerHTML = nasHtml;
 
             } else {
-                // RENDER CABANG
                 document.getElementById('wrapperNasional').classList.add('hidden');
                 document.getElementById('wrapperCabang').classList.remove('hidden');
                 document.getElementById('btnDlNasional').classList.add('hidden');
@@ -258,15 +292,23 @@
                 document.getElementById('totQty').innerText = totQty.toLocaleString('id-ID');
                 document.getElementById('totRp').innerText = formatRp(totRp);
 
-                // Top 10
+                // Render Top 10 dengan Garis Tegas
                 let top10 = [...data].sort((a, b) => b.rp - a.rp).slice(0, 10);
                 let topHtml = "";
                 top10.forEach((d, i) => {
-                    topHtml += `<tr class="border-b border-gray-100 font-medium hover:bg-gray-50"><td class="py-3 px-4 text-green-600 font-bold">${i+1}</td><td class="font-mono text-gray-500">${d.kode}</td><td>${d.nama}</td><td class="text-right">${d.qty}</td><td class="text-right text-green-700 font-bold">${formatRp(d.rp)}</td><td class="text-right px-4">${d.stock}</td></tr>`;
+                    topHtml += `
+                    <tr class="divide-x divide-slate-200 even:bg-slate-50 hover:bg-slate-100 transition-colors">
+                        <td class="py-2.5 px-4 text-center text-green-600 font-bold">${i+1}</td>
+                        <td class="py-2.5 px-4 text-center font-mono text-slate-500">${d.kode}</td>
+                        <td class="py-2.5 px-4 font-medium">${d.nama}</td>
+                        <td class="py-2.5 px-4 text-center">${d.qty}</td>
+                        <td class="py-2.5 px-4 text-right text-green-700 font-bold">${formatRp(d.rp)}</td>
+                        <td class="py-2.5 px-4 text-center">${d.stock}</td>
+                    </tr>`;
                 });
                 document.getElementById('top10Body').innerHTML = topHtml;
 
-                // Bottom 10
+                // Render Bottom 10 dengan Garis Tegas
                 let bottom10 = [...data].filter(d => d.qty > 0).sort((a, b) => {
                     if (a.rp !== b.rp) return a.rp - b.rp;
                     if (a.qty !== b.qty) return a.qty - b.qty;
@@ -274,11 +316,19 @@
                 }).slice(0, 10);
                 let bottomHtml = "";
                 bottom10.forEach((d, i) => {
-                    bottomHtml += `<tr class="border-b border-gray-100 font-medium hover:bg-gray-50"><td class="py-3 px-4 text-orange-500 font-bold">${i+1}</td><td class="font-mono text-gray-500">${d.kode}</td><td>${d.nama}</td><td class="text-right">${d.qty}</td><td class="text-right text-orange-600 font-bold">${formatRp(d.rp)}</td><td class="text-right px-4">${d.stock}</td></tr>`;
+                    bottomHtml += `
+                    <tr class="divide-x divide-slate-200 even:bg-slate-50 hover:bg-slate-100 transition-colors">
+                        <td class="py-2.5 px-4 text-center text-orange-500 font-bold">${i+1}</td>
+                        <td class="py-2.5 px-4 text-center font-mono text-slate-500">${d.kode}</td>
+                        <td class="py-2.5 px-4 font-medium">${d.nama}</td>
+                        <td class="py-2.5 px-4 text-center">${d.qty}</td>
+                        <td class="py-2.5 px-4 text-right text-orange-600 font-bold">${formatRp(d.rp)}</td>
+                        <td class="py-2.5 px-4 text-center">${d.stock}</td>
+                    </tr>`;
                 });
                 document.getElementById('bottom10Body').innerHTML = bottomHtml;
 
-                // 0 PCS
+                // Render 0 PCS dengan Grid Vertikal & Horizontal Terpisah
                 let zeroToko = data.filter(d => d.qty === 0).sort((a,b) => b.stock - a.stock);
                 document.getElementById('z-tot').innerText = `${zeroToko.length} toko`;
                 document.getElementById('z-pct').innerText = `${((zeroToko.length / data.length) * 100).toFixed(1)}%`;
@@ -288,12 +338,29 @@
                 let chunks = chunkArray(zeroToko, 4);
                 let gridHtml = '';
                 chunks.forEach((chunk, colIndex) => {
-                    let table = `<table class="w-full text-xs bg-white shadow-sm border border-gray-200 rounded overflow-hidden"><thead class="bg-gray-100 text-gray-600 border-b border-gray-200"><tr><th class="py-2 px-2 text-left w-8">#</th><th class="py-2 text-left">KODE</th><th class="py-2 text-left">NAMA TOKO</th><th class="py-2 text-right px-2">STK</th></tr></thead><tbody>`;
+                    let table = `
+                    <table class="w-full text-[11px] bg-white shadow-sm border border-slate-300 rounded overflow-hidden">
+                        <thead class="bg-slate-100 text-slate-600 border-b-2 border-slate-300">
+                            <tr class="divide-x divide-slate-300">
+                                <th class="py-2 px-2 text-center w-8">#</th>
+                                <th class="py-2 px-2 text-center">KODE</th>
+                                <th class="py-2 px-2 text-left">NAMA TOKO</th>
+                                <th class="py-2 px-2 text-center">STK</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200">`;
+                    
                     let baseNum = colIndex * Math.ceil(zeroToko.length / 4);
                     chunk.forEach((d, i) => {
                         let isRed = d.stock >= 30;
-                        let rowStyle = isRed ? 'text-mrbred font-bold bg-red-50/50' : 'text-gray-600 hover:bg-gray-50';
-                        table += `<tr class="border-b border-gray-100 ${rowStyle}"><td class="py-2 px-2 opacity-70">${baseNum + i + 1}</td><td class="font-mono">${d.kode}</td><td class="truncate max-w-[90px]" title="${d.nama}">${d.nama}</td><td class="text-right px-2">${d.stock}</td></tr>`;
+                        let rowStyle = isRed ? 'text-mrbred font-bold bg-red-50/70' : 'text-slate-600 even:bg-slate-50 hover:bg-slate-100';
+                        table += `
+                            <tr class="divide-x divide-slate-200 ${rowStyle}">
+                                <td class="py-2 px-2 text-center opacity-70">${baseNum + i + 1}</td>
+                                <td class="py-2 px-2 text-center font-mono">${d.kode}</td>
+                                <td class="py-2 px-2 truncate max-w-[90px]" title="${d.nama}">${d.nama}</td>
+                                <td class="py-2 px-2 text-center">${d.stock}</td>
+                            </tr>`;
                     });
                     table += `</tbody></table>`;
                     gridHtml += `<div>${table}</div>`;
@@ -302,21 +369,24 @@
             }
         }
 
+        // Fungsi Convert HTML ke Gambar JPEG dengan Keamanan CORS untuk GitHub Pages
         function downloadImage(elementId, filenamePrefix) {
             const element = document.getElementById(elementId);
-            const cabangCode = document.querySelector('.cabangCodeHolder').innerText;
-            
-            // Konfigurasi khusus agar Logo Local ter-render sempurna
+            let cabangCode = document.querySelector('.cabangCodeHolder').textContent;
+            if (cabangCode === "GXXX") cabangCode = "Nasional";
+
             html2canvas(element, { 
                 scale: 2, 
                 backgroundColor: "#ffffff",
-                useCORS: true,
-                allowTaint: true
+                useCORS: true
             }).then(canvas => {
                 let link = document.createElement('a');
                 link.download = `${filenamePrefix}_${cabangCode}.jpeg`;
                 link.href = canvas.toDataURL('image/jpeg', 0.9);
                 link.click();
+            }).catch(err => {
+                alert("Gagal mendownload gambar. Pesan error: " + err.message);
+                console.error(err);
             });
         }
     </script>
