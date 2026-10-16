@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mr. Bread Sales Dashboard - Yogyakarta Edition</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- HTML2Canvas -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Konfigurasi Tema Warna Mr. Bread -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        mrbred: '#D3202A', /* Merah Topi Logo */
+                        mrbbrown: '#3E2320', /* Cokelat Kumis */
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        body { background-color: #f8fafc; }
+        .print-area { background: white; margin-bottom: 2rem; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1); border-radius: 0.5rem; overflow: hidden; }
+        /* Pola latar belakang tipis untuk kesan bakery/elegan */
+        .bg-pattern { background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 20px 20px; }
+    </style>
+</head>
+<body class="p-8 bg-pattern">
+
+    <!-- Area Kontrol Input -->
+    <div class="max-w-6xl mx-auto bg-white p-8 rounded-xl shadow-lg border-t-4 border-mrbred mb-8">
+        <div class="flex items-center gap-4 mb-6">
+            <img src="LOGO MRB 2023-01.png" alt="Mr Bread Logo" class="h-12 drop-shadow-sm">
+            <div>
+                <h2 class="text-2xl font-extrabold text-mrbbrown">Generator Dashboard Mr. Bread</h2>
+                <p class="text-sm text-gray-500">Sistem otomatis mendeteksi format Cabang & Nasional.</p>
+            </div>
+        </div>
+        
+        <textarea id="rawData" rows="6" class="w-full p-4 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-mrbred focus:border-transparent font-mono text-sm bg-gray-50" placeholder="Paste text sales Telegram di sini (contoh: data G020, G089, atau Nasional)..."></textarea>
+        
+        <div class="mt-5 flex flex-wrap gap-3">
+            <button onclick="processData()" class="bg-mrbred text-white px-6 py-2.5 rounded-lg font-bold hover:bg-red-700 transition shadow-md flex items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                Proses Data
+            </button>
+            <button id="btnDlTop" onclick="downloadImage('areaTopBottom', 'Dashboard_TopBottom')" class="hidden bg-mrbbrown text-white px-5 py-2.5 rounded-lg hover:bg-gray-900 transition shadow flex items-center gap-2">📸 Unduh Top & Bottom</button>
+            <button id="btnDlZero" onclick="downloadImage('areaZero', 'Dashboard_0_Pcs')" class="hidden bg-orange-600 text-white px-5 py-2.5 rounded-lg hover:bg-orange-700 transition shadow flex items-center gap-2">📸 Unduh 0 Pcs</button>
+            <button id="btnDlNasional" onclick="downloadImage('areaNasional', 'Dashboard_Nasional')" class="hidden bg-mrbred text-white px-5 py-2.5 rounded-lg hover:bg-red-800 transition shadow flex items-center gap-2">📸 Unduh Nasional</button>
+        </div>
+    </div>
+
+    <!-- WRAPPER: CABANG -->
+    <div id="wrapperCabang" class="hidden max-w-5xl mx-auto">
+        
+        <!-- DASHBOARD 1: TOP 10 & BOTTOM 10 -->
+        <div id="areaTopBottom" class="print-area border-t-8 border-mrbred">
+            <!-- Header Branded -->
+            <div class="bg-white px-8 py-6 flex justify-between items-center border-b border-gray-100">
+                <div>
+                    <h4 class="text-mrbred font-bold tracking-widest text-sm mb-1 uppercase">Sales Performance</h4>
+                    <h1 class="text-4xl font-extrabold text-mrbbrown tracking-tight">TOP 10 & BOTTOM 10 TOKO</h1>
+                    <div class="flex items-center gap-3 mt-2">
+                        <span class="bg-mrbred text-white px-3 py-1 rounded-full text-sm font-bold shadow-sm cabangCodeHolder">GXXX</span>
+                        <span class="text-gray-500 font-medium text-sm cabangNameHolder">NAMA CABANG</span>
+                        <span class="text-gray-300">|</span>
+                        <span class="text-sm text-gray-500">Update: <span class="timeUpdateHolder font-semibold"></span></span>
+                    </div>
+                </div>
+                <img src="LOGO MRB 2023-01.png" alt="Logo Mr Bread" class="h-24 object-contain drop-shadow-md">
+            </div>
+
+            <div class="p-8 bg-gray-50/50">
+                <!-- Summary Cards -->
+                <div class="grid grid-cols-5 gap-4 mb-8">
+                    <div class="bg-white border-l-4 border-gray-400 rounded p-4 shadow-sm"><p class="text-xs text-gray-500 font-bold uppercase tracking-wide">Total Toko</p><h3 id="totToko" class="text-2xl font-extrabold text-gray-800 mt-1">0</h3></div>
+                    <div class="bg-white border-l-4 border-green-500 rounded p-4 shadow-sm"><p class="text-xs text-green-600 font-bold uppercase tracking-wide">Sudah Jual</p><h3 id="totJual" class="text-2xl font-extrabold text-green-600 mt-1">0</h3></div>
+                    <div class="bg-white border-l-4 border-mrbred rounded p-4 shadow-sm"><p class="text-xs text-mrbred font-bold uppercase tracking-wide">Toko 0 Pcs</p><h3 id="totNol" class="text-2xl font-extrabold text-mrbred mt-1">0</h3></div>
+                    <div class="bg-white border-l-4 border-mrbbrown rounded p-4 shadow-sm"><p class="text-xs text-gray-500 font-bold uppercase tracking-wide">Total Qty</p><h3 id="totQty" class="text-2xl font-extrabold text-mrbbrown mt-1">0</h3></div>
+                    <div class="bg-white border-l-4 border-mrbred rounded p-4 shadow-sm"><p class="text-xs text-gray-500 font-bold uppercase tracking-wide">Total Rp Sales</p><h3 id="totRp" class="text-2xl font-extrabold text-mrbred mt-1">Rp 0</h3></div>
+                </div>
+
+                <!-- Tabel Top 10 -->
+                <div class="mb-8 bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="bg-green-600 text-white font-bold px-5 py-3 text-lg flex items-center gap-2">
+                        <span>📈</span> 10 TOKO SALES TERTINGGI
+                    </div>
+                    <table class="w-full text-sm">
+                        <thead class="text-gray-500 bg-gray-50 border-b-2 border-gray-200">
+                            <tr><th class="py-3 px-4 text-left font-bold">#</th><th class="py-3 text-left font-bold">KODE</th><th class="py-3 text-left font-bold">NAMA TOKO</th><th class="py-3 text-right font-bold">QTY</th><th class="py-3 text-right font-bold">RP SALES</th><th class="py-3 px-4 text-right font-bold">STOCK</th></tr>
+                        </thead>
+                        <tbody id="top10Body" class="text-gray-700"></tbody>
+                    </table>
+                </div>
+
+                <!-- Tabel Bottom 10 -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="bg-orange-500 text-white font-bold px-5 py-3 text-lg flex items-center gap-2">
+                        <span>📉</span> 10 TOKO SALES TERENDAH <span class="text-sm font-normal opacity-90 ml-2">(Sudah jual, > 0 pcs)</span>
+                    </div>
+                    <table class="w-full text-sm">
+                        <thead class="text-gray-500 bg-gray-50 border-b-2 border-gray-200">
+                            <tr><th class="py-3 px-4 text-left font-bold">#</th><th class="py-3 text-left font-bold">KODE</th><th class="py-3 text-left font-bold">NAMA TOKO</th><th class="py-3 text-right font-bold">QTY</th><th class="py-3 text-right font-bold">RP SALES</th><th class="py-3 px-4 text-right font-bold">STOCK</th></tr>
+                        </thead>
+                        <tbody id="bottom10Body" class="text-gray-700"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- DASHBOARD 2: TOKO 0 PCS -->
+        <div id="areaZero" class="print-area border-t-8 border-mrbred mt-8">
+            <div class="bg-white px-8 py-6 flex justify-between items-center border-b border-gray-100">
+                <div>
+                    <h4 class="text-mrbred font-bold tracking-widest text-sm mb-1 uppercase">Monitor Kunjungan</h4>
+                    <h1 class="text-4xl font-extrabold text-mrbbrown tracking-tight">TOKO SALES 0 PCS</h1>
+                    <div class="flex items-center gap-3 mt-2">
+                        <span class="bg-mrbred text-white px-3 py-1 rounded-full text-sm font-bold shadow-sm cabangCodeHolder">GXXX</span>
+                        <span class="text-gray-500 font-medium text-sm cabangNameHolder">NAMA CABANG</span>
+                    </div>
+                </div>
+                <img src="LOGO MRB 2023-01.png" alt="Logo Mr Bread" class="h-20 object-contain opacity-90">
+            </div>
+            
+            <div class="p-8 bg-gray-50/50">
+                <div class="grid grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100 text-center"><p class="text-xs text-gray-500 font-bold uppercase mb-1">Total Toko 0 Pcs</p><h3 id="z-tot" class="text-2xl font-extrabold text-mrbred">0</h3></div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100 text-center"><p class="text-xs text-gray-500 font-bold uppercase mb-1">% Dari Total Toko</p><h3 id="z-pct" class="text-2xl font-extrabold text-mrbbrown">0%</h3></div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-100 text-center"><p class="text-xs text-gray-500 font-bold uppercase mb-1">Stock Tertahan</p><h3 id="z-stk" class="text-2xl font-extrabold text-orange-600">0 pcs</h3></div>
+                    <div class="bg-white p-4 rounded-lg shadow-sm border border-red-200 text-center bg-red-50/30"><p class="text-xs text-mrbred font-bold uppercase mb-1">Prioritas (Stock >= 30)</p><h3 id="z-30" class="text-2xl font-extrabold text-mrbred">0</h3></div>
+                </div>
+                <div id="zeroGrid" class="grid grid-cols-4 gap-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WRAPPER: NASIONAL -->
+    <div id="wrapperNasional" class="hidden max-w-5xl mx-auto">
+        <div id="areaNasional" class="print-area border-t-8 border-mrbred">
+            <div class="bg-white px-8 py-6 flex justify-between items-center border-b border-gray-100">
+                <div>
+                    <h4 class="text-mrbred font-bold tracking-widest text-sm mb-1 uppercase">Rekapitulasi</h4>
+                    <h1 class="text-4xl font-extrabold text-mrbbrown tracking-tight">RANKING SALES NASIONAL</h1>
+                    <p class="text-sm text-gray-500 mt-2 font-medium">Update: <span class="timeUpdateHolder"></span></p>
+                </div>
+                <img src="LOGO MRB 2023-01.png" alt="Logo Mr Bread" class="h-24 object-contain">
+            </div>
+            <div class="p-8 bg-gray-50/50">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+                    <table class="w-full text-sm">
+                        <thead class="bg-mrbbrown text-white">
+                            <tr><th class="py-3 px-4 text-center w-12 font-semibold">NO</th><th class="py-3 text-left font-semibold">KODE</th><th class="py-3 text-left font-semibold">NAMA CABANG</th><th class="py-3 text-right font-semibold">QTY SALES</th><th class="py-3 text-right font-semibold">RP SALES</th><th class="py-3 px-4 text-right font-semibold">TOTAL STOCK</th></tr>
+                        </thead>
+                        <tbody id="nasionalBody" class="text-gray-700"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Kamus Mapping Cabang (Sesuai wilayah operasional PT Indoroti Prima Cemerlang)
+        const branchDictionary = {
+            "G020": "DC YOGYAKARTA",
+            "G156": "DC KLATEN",
+            "G089": "DC SEMARANG",
+            "G309": "DC PURWOKERTO",
+            "G001": "DC JAKARTA",
+            "G004": "DC JEMBER"
+        };
+
+        function formatRp(num) { return "Rp " + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); }
+        function chunkArray(arr, numChunks) {
+            const chunks = [];
+            const chunkSize = Math.ceil(arr.length / numChunks);
+            for (let i = 0; i < arr.length; i += chunkSize) chunks.push(arr.slice(i, i + chunkSize));
+            return chunks;
+        }
+
+        function processData() {
+            const raw = document.getElementById('rawData').value;
+            if(!raw) return alert("Silakan paste data text terlebih dahulu!");
+
+            const lines = raw.split('\n');
+            let data = [];
+            let isNasional = lines.some(l => l.trim().toLowerCase() === 'nasional');
+            let now = new Date().toLocaleString('id-ID');
+            document.querySelectorAll('.timeUpdateHolder').forEach(el => el.innerText = now);
+
+            if (isNasional) {
+                // RENDER NASIONAL
+                document.getElementById('wrapperNasional').classList.remove('hidden');
+                document.getElementById('wrapperCabang').classList.add('hidden');
+                document.getElementById('btnDlNasional').classList.remove('hidden');
+                document.getElementById('btnDlTop').classList.add('hidden');
+                document.getElementById('btnDlZero').classList.add('hidden');
+
+                lines.forEach(line => {
+                    if (line.includes('|') && line.includes('CAB:')) {
+                        let parts = line.split('|');
+                        let fullName = parts[0].replace('CAB:', '').trim();
+                        let kode = fullName.split('-')[0];
+                        let nama = fullName.split('-')[1] || fullName;
+                        data.push({ kode, nama, qty: parseInt(parts[1].trim()), rp: parseInt(parts[2].replace(/,/g, '').trim()), stock: parseInt(parts[3].trim()) });
+                    }
+                });
+
+                data.sort((a, b) => b.rp - a.rp);
+                let nasHtml = "", tQty = 0, tRp = 0, tStk = 0;
+                data.forEach((d, i) => {
+                    tQty += d.qty; tRp += d.rp; tStk += d.stock;
+                    let highlight = (i < 10) ? "bg-red-50/40 font-semibold" : "hover:bg-gray-50";
+                    nasHtml += `<tr class="border-b border-gray-100 ${highlight}"><td class="py-2.5 px-4 text-center text-gray-500">${i+1}</td><td class="font-mono text-gray-500">${d.kode}</td><td>${d.nama}</td><td class="text-right">${d.qty.toLocaleString('id-ID')}</td><td class="text-right text-mrbred font-bold">${formatRp(d.rp)}</td><td class="text-right px-4">${d.stock.toLocaleString('id-ID')}</td></tr>`;
+                });
+                nasHtml += `<tr class="bg-mrbred text-white font-bold text-base"><td colspan="3" class="py-4 text-center tracking-widest uppercase">Total Nasional</td><td class="text-right">${tQty.toLocaleString('id-ID')}</td><td class="text-right">${formatRp(tRp)}</td><td class="text-right px-4">${tStk.toLocaleString('id-ID')}</td></tr>`;
+                document.getElementById('nasionalBody').innerHTML = nasHtml;
+
+            } else {
+                // RENDER CABANG
+                document.getElementById('wrapperNasional').classList.add('hidden');
+                document.getElementById('wrapperCabang').classList.remove('hidden');
+                document.getElementById('btnDlNasional').classList.add('hidden');
+                document.getElementById('btnDlTop').classList.remove('hidden');
+                document.getElementById('btnDlZero').classList.remove('hidden');
+
+                let cabangCode = "GXXX";
+                let cabLine = lines.find(l => l.includes('Cabang:'));
+                if(cabLine) cabangCode = cabLine.split('Cabang:')[1].trim();
+
+                let branchName = branchDictionary[cabangCode] || "DC INDOMARET";
+                document.querySelectorAll('.cabangCodeHolder').forEach(el => el.innerText = cabangCode);
+                document.querySelectorAll('.cabangNameHolder').forEach(el => el.innerText = branchName);
+
+                lines.forEach(line => {
+                    if (line.includes('|') && line.includes('TOKO:')) {
+                        let parts = line.split('|');
+                        let fullName = parts[0].replace('TOKO:', '').trim();
+                        data.push({ kode: fullName.substring(0, 4), nama: fullName.substring(5).trim(), qty: parseInt(parts[1].trim()), rp: parseInt(parts[2].replace(/,/g, '').trim()), stock: parseInt(parts[3].trim()) });
+                    }
+                });
+
+                if(data.length === 0) return alert("Tidak ditemukan data TOKO.");
+
+                let totQty = 0, totRp = 0, toko0 = 0, tokoJual = 0;
+                data.forEach(d => { totQty += d.qty; totRp += d.rp; if(d.qty === 0) toko0++; else tokoJual++; });
+
+                document.getElementById('totToko').innerText = data.length;
+                document.getElementById('totJual').innerText = tokoJual;
+                document.getElementById('totNol').innerText = toko0;
+                document.getElementById('totQty').innerText = totQty.toLocaleString('id-ID');
+                document.getElementById('totRp').innerText = formatRp(totRp);
+
+                // Top 10
+                let top10 = [...data].sort((a, b) => b.rp - a.rp).slice(0, 10);
+                let topHtml = "";
+                top10.forEach((d, i) => {
+                    topHtml += `<tr class="border-b border-gray-100 font-medium hover:bg-gray-50"><td class="py-3 px-4 text-green-600 font-bold">${i+1}</td><td class="font-mono text-gray-500">${d.kode}</td><td>${d.nama}</td><td class="text-right">${d.qty}</td><td class="text-right text-green-700 font-bold">${formatRp(d.rp)}</td><td class="text-right px-4">${d.stock}</td></tr>`;
+                });
+                document.getElementById('top10Body').innerHTML = topHtml;
+
+                // Bottom 10
+                let bottom10 = [...data].filter(d => d.qty > 0).sort((a, b) => {
+                    if (a.rp !== b.rp) return a.rp - b.rp;
+                    if (a.qty !== b.qty) return a.qty - b.qty;
+                    return b.stock - a.stock; 
+                }).slice(0, 10);
+                let bottomHtml = "";
+                bottom10.forEach((d, i) => {
+                    bottomHtml += `<tr class="border-b border-gray-100 font-medium hover:bg-gray-50"><td class="py-3 px-4 text-orange-500 font-bold">${i+1}</td><td class="font-mono text-gray-500">${d.kode}</td><td>${d.nama}</td><td class="text-right">${d.qty}</td><td class="text-right text-orange-600 font-bold">${formatRp(d.rp)}</td><td class="text-right px-4">${d.stock}</td></tr>`;
+                });
+                document.getElementById('bottom10Body').innerHTML = bottomHtml;
+
+                // 0 PCS
+                let zeroToko = data.filter(d => d.qty === 0).sort((a,b) => b.stock - a.stock);
+                document.getElementById('z-tot').innerText = `${zeroToko.length} toko`;
+                document.getElementById('z-pct').innerText = `${((zeroToko.length / data.length) * 100).toFixed(1)}%`;
+                document.getElementById('z-stk').innerText = `${zeroToko.reduce((s, d) => s + d.stock, 0).toLocaleString('id-ID')} pcs`;
+                document.getElementById('z-30').innerText = `${zeroToko.filter(d => d.stock >= 30).length} toko`;
+
+                let chunks = chunkArray(zeroToko, 4);
+                let gridHtml = '';
+                chunks.forEach((chunk, colIndex) => {
+                    let table = `<table class="w-full text-xs bg-white shadow-sm border border-gray-200 rounded overflow-hidden"><thead class="bg-gray-100 text-gray-600 border-b border-gray-200"><tr><th class="py-2 px-2 text-left w-8">#</th><th class="py-2 text-left">KODE</th><th class="py-2 text-left">NAMA TOKO</th><th class="py-2 text-right px-2">STK</th></tr></thead><tbody>`;
+                    let baseNum = colIndex * Math.ceil(zeroToko.length / 4);
+                    chunk.forEach((d, i) => {
+                        let isRed = d.stock >= 30;
+                        let rowStyle = isRed ? 'text-mrbred font-bold bg-red-50/50' : 'text-gray-600 hover:bg-gray-50';
+                        table += `<tr class="border-b border-gray-100 ${rowStyle}"><td class="py-2 px-2 opacity-70">${baseNum + i + 1}</td><td class="font-mono">${d.kode}</td><td class="truncate max-w-[90px]" title="${d.nama}">${d.nama}</td><td class="text-right px-2">${d.stock}</td></tr>`;
+                    });
+                    table += `</tbody></table>`;
+                    gridHtml += `<div>${table}</div>`;
+                });
+                document.getElementById('zeroGrid').innerHTML = gridHtml;
+            }
+        }
+
+        function downloadImage(elementId, filenamePrefix) {
+            const element = document.getElementById(elementId);
+            const cabangCode = document.querySelector('.cabangCodeHolder').innerText;
+            
+            // Konfigurasi khusus agar Logo Local ter-render sempurna
+            html2canvas(element, { 
+                scale: 2, 
+                backgroundColor: "#ffffff",
+                useCORS: true,
+                allowTaint: true
+            }).then(canvas => {
+                let link = document.createElement('a');
+                link.download = `${filenamePrefix}_${cabangCode}.jpeg`;
+                link.href = canvas.toDataURL('image/jpeg', 0.9);
+                link.click();
+            });
+        }
+    </script>
+</body>
+</html>
